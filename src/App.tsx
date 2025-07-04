@@ -15,6 +15,7 @@ function App() {
   const [similarity, setSimilarity] = useState<number>(0);
   const [score, setScore] = useState<number>(0);
   const [inputMode, setInputMode] = useState<'manual' | 'select'>('manual');
+  const [refMode, setRefMode] = useState<'manual' | 'select'>('manual');
 
   const handleSubmit = async () => {
     if (!answer.trim()) {
@@ -38,6 +39,12 @@ function App() {
     setScore(0);
   };
 
+  const handleRefModeChange = (mode: 'manual' | 'select') => {
+    setRefMode(mode);
+    setReference('');
+    setQuestion('');
+  }
+
   return (
     <div className="flex items-center justify-center h-screen w-screen bg-base-200">
     <div className="card w-full max-w-4xl bg-base-100 shadow-xl p-10 space-y-6 mx-auto">
@@ -49,16 +56,51 @@ function App() {
           </div>
 
           <div className="form-control">
-            <label className="label font-semibold">Question</label>
-            <QuestionSelector
-              scenario={scenario}
-              setQuestion={setQuestion}
-              setReference={setReference}
-              setDatasetId={setDatasetId}
-            />
+            <label className="label font-semibold">Input Reference Answer Mode</label>
+            <div className="flex gap-4">
+              <label className="label cursor-pointer">
+                <input
+                  type="radio"
+                  name="refMode"
+                  className="radio checked:bg-primary"
+                  checked={refMode === 'manual'}
+                  onChange={() => handleRefModeChange('manual')}
+                />
+                <span className="ml-2">Manual Input</span>
+              </label>
+              <label className="label cursor-pointer">
+                <input
+                  type="radio"
+                  name="refMode"
+                  className="radio checked:bg-primary"
+                  checked={refMode === 'select'}
+                  onChange={() => handleRefModeChange('select')}
+                />
+                <span className="ml-2">Choose Reference Answer</span>
+              </label>
+            </div>
           </div>
 
-          {question && (
+          {refMode === 'manual' && (
+            <div className="form-control">
+              <label className="label font-semibold">Your Reference Answer</label>
+              <AnswerInput answer={reference} setAnswer={setReference} />
+            </div>
+          )}
+
+          {refMode === 'select' && (
+            <div className="form-control">
+              <label className="label font-semibold">Question</label>
+              <QuestionSelector
+                scenario={scenario}
+                setQuestion={setQuestion}
+                setReference={setReference}
+                setDatasetId={setDatasetId}
+              />
+            </div>
+          )}
+
+          {question && refMode === 'select' && (
             <div className="bg-base-100 border border-base-300 rounded p-4">
               <p className="mb-2"><span className="font-semibold">Question:</span> {question}</p>
               <p><span className="font-semibold">Reference:</span> {reference}</p>
@@ -66,7 +108,7 @@ function App() {
           )}
 
           <div className="form-control">
-            <label className="label font-semibold">Input Mode</label>
+            <label className="label font-semibold">Input Student Answer Mode</label>
             <div className="flex gap-4">
               <label className="label cursor-pointer">
                 <input
@@ -86,7 +128,7 @@ function App() {
                   checked={inputMode === 'select'}
                   onChange={() => handleInputModeChange('select')}
                 />
-                <span className="ml-2">Choose Answer</span>
+                <span className="ml-2">Choose Student Answer</span>
               </label>
             </div>
           </div>
