@@ -31,7 +31,9 @@ export default function QuestionSelector({
 
   useEffect(() => {
     if (!scenario) return;
-    getQuestions(scenario).then((res) => setQuestions(res.data));
+    getQuestions(scenario).then((res) => {
+      setQuestions(res.data)
+    });
   }, [scenario]);
 
   const questionHandler = (datasetId: string) => {

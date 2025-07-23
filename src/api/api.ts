@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const BASE = 'http://localhost:5000';
 
-// --- Define types for expected response data ---
 export interface Question {
   dataset_id: string;
   question: string;
@@ -20,7 +19,6 @@ export interface ScoreResponse {
   similarity_score: number;
 }
 
-// --- API calls with typed responses ---
 export const getQuestions = (scenario: string) =>
   axios.get<Question[]>(`${BASE}/questions`, { params: { scenario } });
 

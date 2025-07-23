@@ -120,16 +120,20 @@ function App() {
                 />
                 <span className="ml-2">Manual Input</span>
               </label>
-              <label className="label cursor-pointer">
-                <input
-                  type="radio"
-                  name="inputMode"
-                  className="radio checked:bg-primary"
-                  checked={inputMode === 'select'}
-                  onChange={() => handleInputModeChange('select')}
-                />
-                <span className="ml-2">Choose Student Answer</span>
-              </label>
+              {
+                refMode === 'select' && (
+                  <label className="label cursor-pointer">
+                    <input
+                      type="radio"
+                      name="inputMode"
+                      className="radio checked:bg-primary"
+                      checked={inputMode === 'select'}
+                      onChange={() => handleInputModeChange('select')}
+                    />
+                    <span className="ml-2">Choose Student Answer</span>
+                  </label>
+                )
+              }
             </div>
           </div>
 
