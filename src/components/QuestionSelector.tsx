@@ -15,14 +15,12 @@ interface Question {
 }
 
 interface QuestionSelectorProps {
-  scenario: string;
   setQuestion: (question: string) => void;
   setReference: (reference: string) => void;
   setDatasetId: (datasetId: string) => void;
 }
 
 export default function QuestionSelector({
-  scenario,
   setQuestion,
   setReference,
   setDatasetId,
@@ -30,11 +28,10 @@ export default function QuestionSelector({
   const [questions, setQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
-    if (!scenario) return;
-    getQuestions(scenario).then((res) => {
+    getQuestions().then((res) => {
       setQuestions(res.data)
     });
-  }, [scenario]);
+  }, []);
 
   const questionHandler = (datasetId: string) => {
     setDatasetId(datasetId);

@@ -1,7 +1,7 @@
 import axios from 'axios';
 // const BASE = import.meta.env.VITE_API_URL;
 
-const BASE = 'http://localhost:5000';
+const BASE = 'http://127.0.0.1:5000';
 
 export interface Question {
   dataset_id: string;
@@ -19,22 +19,21 @@ export interface ScoreResponse {
   similarity_score: number;
 }
 
-export const getQuestions = (scenario: string) =>
-  axios.get<Question[]>(`${BASE}/questions`, { params: { scenario } });
+export const getQuestions = () =>
+  axios.get<Question[]>(`${BASE}/questions`);
 
-export const getAnswers = (scenario: string, dataset_id: string) =>
+export const getAnswers = (dataset_id: string) =>
   axios.get<Answer[]>(`${BASE}/student_answer`, {
-    params: { scenario, dataset_id },
+    params: { dataset_id },
 });
 
 export const getScore = async (
   answer: string,
-  reference: string,
-  scenario: string
+  reference: string
 ): Promise<ScoreResponse> => {
   const res = await axios.post<{ direct_score: number; similarity_score: number }>(
     `${BASE}/score`,
-    { answer, reference, scenario }
+    { answer, reference }
   );
   return res.data;
 };

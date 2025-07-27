@@ -16,22 +16,20 @@ interface Answer {
 interface AnswerSelectorProps {
   setAnswer: (answer: string) => void;
   datasetId: string | null;
-  scenario: string;
   setScore: (score: number) => void;
 }
 
 export default function AnswerSelector({
   setAnswer,
   datasetId,
-  scenario,
   setScore,
 }: AnswerSelectorProps) {
   const [answers, setAnswers] = useState<Answer[]>([]);
 
   useEffect(() => {
     if (!datasetId) return;
-    getAnswers(scenario, datasetId).then((res) => setAnswers(res.data));
-  }, [datasetId, scenario]);
+    getAnswers(datasetId).then((res) => setAnswers(res.data));
+  }, [datasetId]);
 
   const answerHandler = (index: string) => {
     const idx = parseInt(index);

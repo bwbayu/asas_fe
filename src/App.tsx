@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import ScenarioSelector from "./components/ScenarioSelector";
 import QuestionSelector from './components/QuestionSelector';
 import AnswerInput from './components/AnswerInput';
 import AnswerSelector from './components/AnswerSelector';
 import { getScore } from './api/api';
 
 function App() {
-  const [scenario, setScenario] = useState<string>('');
   const [datasetId, setDatasetId] = useState<string>('');
   const [question, setQuestion] = useState<string>('');
   const [reference, setReference] = useState<string>('');
@@ -23,8 +21,13 @@ function App() {
       return;
     }
 
+    if (!reference.trim()) {
+      alert("Reference Answer cannot be empty.");
+      return;
+    }
+
     try {
-      const res = await getScore(answer, reference, scenario);
+      const res = await getScore(answer, reference);
         setDirect(res.direct_score);
         setSimilarity(res.similarity_score);
     } catch (err) {
@@ -49,12 +52,6 @@ function App() {
     <div className="flex items-center justify-center h-screen w-screen bg-base-200">
     <div className="card w-full max-w-4xl bg-base-100 shadow-xl p-10 space-y-6 mx-auto">
           <h1 className="text-4xl font-bold text-center text-primary">ASAS Demo</h1>
-
-          <div className="form-control">
-            <label className="label font-semibold">Scenario</label>
-            <ScenarioSelector scenario={scenario} setScenario={setScenario} />
-          </div>
-
           <div className="form-control">
             <label className="label font-semibold">Input Reference Answer Mode</label>
             <div className="flex gap-4">
@@ -92,7 +89,6 @@ function App() {
             <div className="form-control">
               <label className="label font-semibold">Question</label>
               <QuestionSelector
-                scenario={scenario}
                 setQuestion={setQuestion}
                 setReference={setReference}
                 setDatasetId={setDatasetId}
@@ -150,7 +146,6 @@ function App() {
               <AnswerSelector
                 setAnswer={setAnswer}
                 datasetId={datasetId}
-                scenario={scenario}
                 setScore={setScore}
               />
             </div>
