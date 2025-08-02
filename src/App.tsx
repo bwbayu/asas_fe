@@ -94,6 +94,14 @@ function App() {
     <div className="flex items-center justify-center h-screen w-screen bg-base-200">
     <div className="card w-full max-w-4xl bg-base-100 shadow-xl p-10 space-y-6 mx-auto">
           <h1 className="text-4xl font-bold text-center text-primary">ASAS Demo</h1>
+          {
+            questions.length == 0 && answers.length == 0 && 
+            (
+              <p className="text-sm text-gray-700 text-center bg-yellow-100 px-2 py-1 rounded">
+                Jika data opsi belum tersedia, mohon tunggu—backend sedang memuat data.
+              </p>
+            )
+          }
           <div className="form-control">
             <label className="label font-semibold">Input Reference Answer Mode</label>
             <div className="flex gap-4">
