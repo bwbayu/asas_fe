@@ -1,19 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import QuestionSelector from './components/QuestionSelector';
 import AnswerInput from './components/AnswerInput';
 import AnswerSelector from './components/AnswerSelector';
-import { getScore } from './api/api';
+import { getAnswers, getQuestions, getScore } from './api/api';
+import { AxiosError } from 'axios';
+import type { Answer, AnswersMap, Question } from "@/api/api";
 
 function App() {
-  const [datasetId, setDatasetId] = useState<string>('');
+  const [datasetId, setDatasetId] = useState<string>('1');
   const [question, setQuestion] = useState<string>('');
   const [reference, setReference] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
+  // SCORE STATE
   const [direct, setDirect] = useState<number>(0);
   const [similarity, setSimilarity] = useState<number>(0);
   const [score, setScore] = useState<number>(0);
+  // RADIO BUTTON STATE
   const [inputMode, setInputMode] = useState<'manual' | 'select'>('manual');
   const [refMode, setRefMode] = useState<'manual' | 'select'>('manual');
+  // SELECT DATA STATE
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [answersMap, setAnswersMap] = useState<AnswersMap>({});
+  const [answers, setAnswers] = useState<Answer[]>([]);
 
   const handleSubmit = async () => {
     if (!answer.trim()) {
@@ -31,8 +39,14 @@ function App() {
         setDirect(res.direct_score);
         setSimilarity(res.similarity_score);
     } catch (err) {
-      console.error("Error fetching score:", err);
-      alert("Failed to get score. Please try again.");
+      const axiosErr = err as AxiosError;
+      const status = axiosErr.response?.status;
+
+      if (status === 429) {
+        alert('You’re requesting too fast. Please wait a minute and try again.');
+      } else {
+        alert('Failed to get score. Please try again.');
+      }
     }
   };
 
@@ -47,6 +61,34 @@ function App() {
     setReference('');
     setQuestion('');
   }
+
+  // GET QUESTION DATA ONCE PER RELOAD
+  useEffect(() => {
+    getQuestions().then((res) => {
+      setQuestions(res.data)
+    }).catch(err => {
+        console.error('Failed to load Question:', err);
+        setQuestions([]);
+      });
+  }, []);
+
+  // GET ANSWER DATA ONCE PER RELOAD
+  useEffect(() => {
+    getAnswers()
+      .then(res => {
+        setAnswersMap(res.data)}
+      )
+      .catch(err => {
+        console.error('Failed to load answersMap:', err);
+        setAnswersMap({});
+      });
+  }, []);
+
+  useEffect(() => {
+    const key = String(datasetId);
+    const bucket = answersMap[key] ?? [];
+    setAnswers(bucket);
+  }, [datasetId, answersMap]);
 
   return (
     <div className="flex items-center justify-center h-screen w-screen bg-base-200">
@@ -92,6 +134,7 @@ function App() {
                 setQuestion={setQuestion}
                 setReference={setReference}
                 setDatasetId={setDatasetId}
+                questions={questions}
               />
             </div>
           )}
@@ -145,8 +188,8 @@ function App() {
               <label className="label font-semibold">Choose from list</label>
               <AnswerSelector
                 setAnswer={setAnswer}
-                datasetId={datasetId}
                 setScore={setScore}
+                answers={answers}
               />
             </div>
           )}

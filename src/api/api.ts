@@ -12,6 +12,8 @@ export interface Answer {
   score: number;
 }
 
+export type AnswersMap = Record<string, Answer[]>;
+
 export interface ScoreResponse {
   direct_score: number;
   similarity_score: number;
@@ -20,10 +22,8 @@ export interface ScoreResponse {
 export const getQuestions = () =>
   axios.get<Question[]>(`${BASE}/questions`);
 
-export const getAnswers = (dataset_id: string) =>
-  axios.get<Answer[]>(`${BASE}/student_answer`, {
-    params: { dataset_id },
-});
+export const getAnswers = () =>
+  axios.get<AnswersMap>(`${BASE}/student_answer`);
 
 export const getScore = async (
   answer: string,

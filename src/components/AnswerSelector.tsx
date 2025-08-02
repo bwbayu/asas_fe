@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { getAnswers } from "@/api/api";
+import { type Answer } from "@/api/api";
 import {
   Select,
   SelectContent,
@@ -8,29 +7,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface Answer {
-  answer: string;
-  score: number;
-}
 
 interface AnswerSelectorProps {
   setAnswer: (answer: string) => void;
-  datasetId: string | null;
   setScore: (score: number) => void;
+  answers: Answer[]
 }
 
 export default function AnswerSelector({
   setAnswer,
-  datasetId,
   setScore,
+  answers
 }: AnswerSelectorProps) {
-  const [answers, setAnswers] = useState<Answer[]>([]);
-
-  useEffect(() => {
-    if (!datasetId) return;
-    getAnswers(datasetId).then((res) => setAnswers(res.data));
-  }, [datasetId]);
-
   const answerHandler = (index: string) => {
     const idx = parseInt(index);
     const selected = answers[idx];

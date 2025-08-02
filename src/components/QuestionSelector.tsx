@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { getQuestions } from "@/api/api";
 import {
   Select,
   SelectContent,
@@ -7,32 +5,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface Question {
-  dataset_id: string;
-  question: string;
-  reference_answer: string;
-}
+import type { Question } from "@/api/api";
 
 interface QuestionSelectorProps {
   setQuestion: (question: string) => void;
   setReference: (reference: string) => void;
   setDatasetId: (datasetId: string) => void;
+  questions: Question[];
 }
 
 export default function QuestionSelector({
   setQuestion,
   setReference,
   setDatasetId,
+  questions,
 }: QuestionSelectorProps) {
-  const [questions, setQuestions] = useState<Question[]>([]);
-
-  useEffect(() => {
-    getQuestions().then((res) => {
-      setQuestions(res.data)
-    });
-  }, []);
-
   const questionHandler = (datasetId: string) => {
     setDatasetId(datasetId);
     const data = questions.find((q) => q.dataset_id === datasetId);
